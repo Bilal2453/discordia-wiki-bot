@@ -1,3 +1,5 @@
 cache
 .vscode
 *.code-workspace
+discordia.log
+gateway.json
