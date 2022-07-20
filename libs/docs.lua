@@ -118,6 +118,28 @@ function docs.scanDir(dir, results)
   return results
 end
 
+local function inherit(class, parent)
+  if not parent then return end
+  local class_name = class.name:lower()
+  -- inherit methods
+  for _, method in pairs(parent.methods) do
+    local method_name = method.name:lower()
+    if not docs.methods_map[class_name][method_name] then
+      insert(class.methods, method)
+      insert(docs.method_names_array[class_name], method.name)
+      docs.methods_map[class_name][method_name] = method
+    end
+  end
+  -- inherit properties
+  for _, property in ipairs(parent.properties or {}) do
+    local property_name = property.name:lower()
+    if not docs.properties_map[class_name][property_name] then
+      insert(class.properties, property)
+      insert(docs.property_names_array[class_name], property.name)
+      docs.properties_map[class_name][property_name] = property
+    end
+  end
+end
 
 --- Loads the classes by building the necessarily maps and arrays, and makes them available through `docs`.
 ---@param classes doc_class[]
@@ -168,26 +190,16 @@ function docs.load(classes)
 
   -- modify each class to include inherited methods and proprties from parents
   for _, class in ipairs(docs.raw_classes) do
-    local class_name = class.name:lower()
     for _, parent in ipairs(class.parents or {}) do
       local parent_class = docs.getClass(parent)
-      if parent_class then
-        for _, method in ipairs(parent_class.methods) do
-          insert(class.methods, method)
-          insert(docs.method_names_array[class_name], method.name)
-          docs.methods_map[class_name][method.name:lower()] = method
-        end
-        for _, property in ipairs(parent_class.properties or {}) do
-          local property_name = property.name:lower()
-          if not docs.properties_map[class_name][property_name] then
-            insert(class.properties, property)
-            insert(docs.property_names_array[class_name], property.name)
-            docs.properties_map[class_name][property_name] = property
-          end
-        end
-      end
+      inherit(class, parent_class)
     end
   end
+
+  -- a special exception for Member class
+  local member_class = docs.getClass('member')
+  local user_class = docs.getClass('user')
+  inherit(member_class, user_class)
 end
 
 --- Similar to [docs.load] except that it extract the classes from a directory using [docs.scanDir].
