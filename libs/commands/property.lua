@@ -14,9 +14,9 @@ local function callback(intr)
   local target_property = options[2].value
   local target_user = options[3] and options[3].value
 
-  -- find the specified property
+  -- find the specified property and reply
   local property = checkProperty(intr, target_class, target_property)
-
+  if not property then return end
   intr:reply(response.property(property, target_user))
 end
 

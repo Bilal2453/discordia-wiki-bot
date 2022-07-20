@@ -6,7 +6,6 @@ local checkClass = utils.checkClass
 
 local responses = require 'response'
 
----@param intr Interaction
 local function callback(intr)
   local options = intr.data.options
 
@@ -14,9 +13,9 @@ local function callback(intr)
   local target_class = options[1].value
   local target_user = options[2] and options[2].value
 
-  -- find the specified class
+  -- find the specified class and reply
   local class = checkClass(intr, target_class)
-
+  if not class then return end
   intr:reply(responses.class(class, target_user))
 end
 

@@ -44,7 +44,6 @@ local queries = {
   end
 }
 
----@param intr Interaction
 local function callback(intr)
   local options = intr.data.options
 

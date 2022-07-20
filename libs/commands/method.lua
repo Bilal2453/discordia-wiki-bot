@@ -14,9 +14,9 @@ local function callback(intr)
   local target_method = options[2].value
   local target_user = options[3] and options[3].value
 
-  -- find the targeted method
+  -- find the targeted method and reply
   local method = checkMethod(intr, target_class, target_method)
-
+  if not method then return end
   intr:reply(response.method(method, target_user))
 end
 
