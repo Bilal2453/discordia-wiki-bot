@@ -1,0 +1,3 @@
+[submodule "deps/discordia-interactions"]
+	path = deps/discordia-interactions
+	url = https://github.com/Bilal2453/discordia-interactions.git
