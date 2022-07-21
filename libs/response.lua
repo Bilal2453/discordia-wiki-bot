@@ -67,7 +67,7 @@ local tags_map = {
 }
 local function handleTags(tags)
   local text = ''
-  for _, tag in ipairs(tags) do
+  for _, tag in ipairs(tags or {}) do
     if tags_map[tag] then
       text = text .. tags_map[tag] .. '\n'
     end
