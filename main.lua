@@ -15,9 +15,6 @@ local MAX_AUTOCOMPLETE = 25
 
 local client = discordia.Client(configs.client_options)
 
----@type fun(self: Client, name: string, description: string, options?: commandoptions[], guild?: string): slashcommand?, string?
-local createSlashCommand = client.createSlashCommand
-
 -- Check whether `git` is accessible or not
 do
   local spawn = require 'coro-spawn'
@@ -74,12 +71,10 @@ local commands = require 'commands'
 
 -- Slash commands handler
 client:once('ready', function()
-  -- register the command
-  for _, command in pairs(commands) do
-    local cmd, err = createSlashCommand(client, command.name, command.description, command.options, '613745977941164043')
-    if not cmd then
-      client:error('Attempt to register "%s" command failed: %s', command.name, err)
-    end
+  -- register the commands
+  local success, err = client:bulkOverwriteSlashCommands(commands)
+  if not success then
+    client:error('Attempt to register slash commands failed: %s', err)
   end
 
   -- handle the command callback and runtime errors

@@ -56,9 +56,14 @@ do
     return self:request('POST', endpoint, payload)
   end
 
-  function API:createGuildApplicationCommand(application_id, guild_id, payload)
+  function API:createGuildApplicationCommand(application_id, payload, guild_id)
     local endpoint = f(endpoints.guildApplicationCommands, application_id, guild_id)
     return self:request('POST', endpoint, payload)
+  end
+
+  function API:bulkOverwriteGlobalApplicationCommands(application_id, payload)
+    local endpoint = f(endpoints.globalApplicationCommands, application_id)
+    return self:request('PUT', endpoint, payload)
   end
 
   -- inject the new API calls into the actual discordia/API
@@ -85,16 +90,41 @@ do
   ---@param options? commandoptions
   ---@return slashcommand|nil command, string? err
   function discordia_client:createSlashCommand(name, description, options, guild)
-    -- TODO: do version checking
-    local data, err = self._api:createGuildApplicationCommand(self.user.id, guild, {
+    local call
+    if guild then
+      call = self._api.createGuildApplicationCommand
+    else
+      call = self._api.createGlobalApplicationCommand
+    end
+    local data, err = call(self._api, self.user.id, {
       type = 1, -- CHAT_INPUT
       name = name,
       description = description,
       options = options,
       dm_permission = true,
       default_permission = true,
-    })
+    }, guild)
 
+    if data then
+      return data
+    else
+      return nil, err
+    end
+  end
+
+  function discordia_client:bulkOverwriteSlashCommands(commands)
+    local payload = {}
+    for _, command in pairs(commands) do
+      table.insert(payload, {
+        type = 1,
+        name = command.name,
+        description = command.description,
+        options = command.options,
+        dm_permission = true,
+        default_permission = true,
+      })
+    end
+    local data, err = self._api:bulkOverwriteGlobalApplicationCommands(self.user.id, payload)
     if data then
       return data
     else
