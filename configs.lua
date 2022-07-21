@@ -1,5 +1,5 @@
 return {
-  token = 'Bot NTYxOTM0MzE2ODE3NjEyODEw.GJ75RV.wKFIHuEEJpn_nh1fKWQ9IIGTWKvwAylGT5lUWQ',
+  token = 'Bot ',
   client_options = nil,
 
   docs_cache_path = './cache/docs.json', -- the folder under which json dumps of the classes are saved to,

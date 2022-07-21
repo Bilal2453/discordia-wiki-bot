@@ -3,3 +3,4 @@ cache
 *.code-workspace
 discordia.log
 gateway.json
+test-run.lua
