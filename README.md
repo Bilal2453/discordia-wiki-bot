@@ -17,7 +17,7 @@ A new folder with the name `discordia-wiki-bot` will show up in the directory th
 
 First thing you want to do before running the bot is changing the `token` field inside `configs.lua` to your own bot's token.
 
-You should now be ready to run the command. Make sure the bot application has the required scopes, `bot` and `commands` that is.
+You should now be ready to run the command. Make sure the bot application has the required scopes, `bot` and `application.commands` that is.
 
 
 ## Available commands
