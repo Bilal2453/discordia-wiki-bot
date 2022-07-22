@@ -28,14 +28,14 @@ return {
     {
       type = 3,
       name = 'class',
-      description = 'The class of which to post its page.',
+      description = 'The class of which to post its page',
       required = true,
       autocomplete = true,
     },
     {
       type = 6,
       name = 'target',
-      description = 'Reply to this user with the command\'s result.',
+      description = 'Reply to this user with the command\'s result',
       required = false,
     },
   },

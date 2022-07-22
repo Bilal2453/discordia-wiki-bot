@@ -7,22 +7,16 @@ local join = require'pathjoin'.pathJoin
 local configs = require 'configs'
 local git = require 'git'
 
-local TMP_PATH = '../.tmp'
-local GIT_DB = '.git'
-local branches -- lazy-loaded when needed
+-- local branches -- lazy-loaded when needed
 
-local cache = {
-  --- The path at which the repo should be cached.
-  ---@type string
-  path = configs.repo_cache_path,
-  --- The URL of the Git repo to sync against.
-  ---@type string
-  repo_url = configs.repo_url,
-  --- Toggling this on, will allow the `cache.initialize` to automatically delete cache and tmp directories.
-  --- Should be safe as long as the user is not also writing data there.
-  ---@type boolean
-  unsafe = configs.unsafe,
-}
+local repo_path = configs.repo_cache_path
+local repo_url = configs.repo_url
+local unsafe = configs.unsafe
+
+local TMP_PATH = configs.repo_tmp_path
+local GIT_DB = join(repo_path, '.git')
+
+local cache = {}
 
 --- A helper function to recursively delete a directory.
 --- See coro-fs for the inspiration.
@@ -53,32 +47,32 @@ function cache.initialize()
   -- make a new temproray directory
   -- we clone first into a temproray directory to ensure integrity
   -- it also ensures the async code is not going to try indexing a cache path that does not exists while cloning
-  local tmp = join(cache.path, TMP_PATH)
+  --
   -- handle tmp already existing
-  if exists(tmp) then
-    if cache.unsafe then
-      rmrf(tmp)
+  if exists(TMP_PATH) then
+    if unsafe then
+      rmrf(TMP_PATH)
     else
-      error(tmp .. ' directory already exists. Please either remove it or enable configs.unsafe')
+      error(TMP_PATH .. ' directory already exists. Please either remove it or enable configs.unsafe')
     end
   end
-  assert(fs.mkdirpSync(tmp))
+  assert(fs.mkdirpSync(TMP_PATH))
   -- clone the repo into the temproray directory
-  local success, err = git.clone(cache.repo_url, tmp)
+  local success, err = git.clone(repo_url, TMP_PATH)
   if not success then
-    rmrf(tmp)
+    rmrf(TMP_PATH)
     error(err)
   end
   -- handle the main directory already existing
-  if exists(cache.path) then
-    if cache.unsafe then
-      rmrf(cache.path)
+  if exists(repo_path) then
+    if unsafe then
+      rmrf(repo_path)
     else
-      error(cache.path .. ' directory already exists. Please either remove it or enable configs.unsafe')
+      error(repo_path .. ' directory already exists. Please either remove it or enable configs.unsafe')
     end
   end
   -- rename the temproray directory to `path`
-  assert(fs.renameSync(tmp, cache.path))
+  assert(fs.renameSync(TMP_PATH, repo_path))
 end
 
 --- Refreshes the cache syncing it with most recent changes on branch.
@@ -107,15 +101,15 @@ function cache.refresh(branch)
   ]]
 
   -- make sure the path exists
-  if not exists(cache.path) then
-    return nil, 'No cache has been initalized at ' .. cache.path
+  if not exists(repo_path) then
+    return nil, 'No cache has been initalized at ' .. repo_path
   end
   -- make sure the path has a git database
-  if not exists(join(cache.path, GIT_DB)) then
+  if not exists(GIT_DB) then
     return nil, 'The repository cache does not have a Git database'
   end
   -- start pulling any changes on the specified branch
-  local success, err = git.pull(cache.path, branch)
+  local success, err = git.pull(repo_path, branch)
   if not success then
     return nil, 'Git pull failed while refreshing the cache: ' .. err
   end
@@ -124,17 +118,13 @@ end
 
 --- Deletes any cached data
 function cache.remove()
-  -- remove the repo cache
-  rmrf(cache.path)
-  -- remove any temproray cache
-  rmrf(join(cache.path, TMP_PATH))
-  rm(configs.docs_cache_path)
+  rmrf(configs.cache_path)
 end
 
 --- Check whether the repo cache exists or not.
 ---@return boolean
 function cache.isInitialized()
-  return exists(cache.path) and exists(join(cache.path, GIT_DB))
+  return exists(repo_path) and exists(GIT_DB)
 end
 
 return cache

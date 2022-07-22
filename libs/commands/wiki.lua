@@ -67,19 +67,19 @@ end
 return {
   callback = callback,
   name = 'wiki',
-  description = 'Posts documentation about a class or a method or a property.',
+  description = 'Posts documentation about a class or a method or a property',
   ---@type commandoptions[]
   options = {
     {
       type = 3,
       name = 'query',
-      description = 'A search query. This can be of many formats: "class", "method", "class[%p]method".',
+      description = 'A search query. This can be of many formats: "class", "method", "class[%p]method"',
       required = true,
     },
     {
       type = 6,
       name = 'target',
-      description = 'Reply to this user with the command\'s result.',
+      description = 'Reply to this user with the command\'s result',
       required = false,
     }
   },

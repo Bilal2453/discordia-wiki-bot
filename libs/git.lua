@@ -33,11 +33,11 @@ end
 --- Clones a Git repository with `url` into `dir`.
 --- Returns `nil, err` on failure.
 ---@param url string  # will raise an error if not supplied.
----@param dir? string # default `configs.docs_cache_path`.
+---@param dir string  # will raise an error if not supplied.
 ---@return boolean|nil success, table|string process_or_err
 function git.clone(url, dir)
   assert(url, 'bad argument #1 to git.clone (expected string, got ' .. type(url) .. ')')
-  dir = dir or configs.repo_cache_path
+  assert(dir, 'bad argument #2 to git.clone (expected string, got ' .. type(dir) .. ')')
   -- does the specified directory exists?
   do
     local exist, err = exists(dir)

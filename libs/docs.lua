@@ -118,6 +118,9 @@ function docs.scanDir(dir, results)
   return results
 end
 
+--- Copies the methods and properties of `parent` to `class`.
+---@param class doc_class
+---@param parent doc_class?
 local function inherit(class, parent)
   if not parent then return end
   local class_name = class.name:lower()
@@ -198,27 +201,9 @@ function docs.load(classes)
 
   -- a special exception for Member class
   local member_class = docs.getClass('member')
-  local user_class = docs.getClass('user')
-  inherit(member_class, user_class)
-end
-
---- Similar to [docs.load] except that it extract the classes from a directory using [docs.scanDir].
----@param path string
-function docs.loadFromDir(path)
-  docs.load(docs.scanDir(path))
-end
-
---- Similar to [docs.lua] except that it extracts the classes from a pre-saved JSON file saved with [docs.saveJson].
----@param path string
-function docs.loadFromJson(path)
-  local contents = assert(read(path))
-  docs.load(assert(decode(contents)))
-end
-
---- Dumps the classes into a JSON file.
----@param path string # The JSON file path.
-function docs.saveJson(path)
-  assert(write(path, encode(docs.raw_classes)))
+  if member_class then
+    inherit(member_class, docs.getClass('user'))
+  end
 end
 
 --- Searches for a class structure by name.
@@ -274,6 +259,32 @@ function docs.resolveTypes(types)
     end
   end
   return result
+end
+
+--- Similar to [docs.load] except that it extract the classes from a directory using [docs.scanDir].
+---@param path string
+function docs.loadFromDir(path)
+  docs.load(docs.scanDir(path))
+end
+
+--- Similar to [docs.lua] except that it extracts the classes from a pre-saved JSON file saved with [docs.saveJson].
+---@param path string
+function docs.loadFromJson(path)
+  local contents = assert(read(path))
+  docs.load(assert(decode(contents)))
+end
+
+--- Dumps all classes into a JSON file.
+---@param path string # The JSON file path.
+function docs.saveJson(path)
+  assert(write(path, encode(docs.raw_classes)))
+end
+
+function docs.generate()
+  -- load all classes from the repo directory
+  docs.loadFromDir(configs.repo_cache_path)
+  -- generate the classes cache
+  docs.saveJson(configs.docs_cache_path)
 end
 
 return docs
