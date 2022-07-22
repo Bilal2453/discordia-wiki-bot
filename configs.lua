@@ -15,4 +15,11 @@ return {
   reset_to = nil,     -- on each git.pull a hard reset is done to apply the fetched data. by default this is origin/branch.
 
   wiki_base = 'https://github.com/SinisterRectus/Discordia/wiki/', -- the base URL of the Wiki to suffix class names to.
+
+  -- A unique color for each type of response
+  res_colors = {
+    class = 0xaaaaee,
+    method = 0x12b1b1,
+    property = 0xdf5555,
+  }
 }

@@ -4,6 +4,9 @@ local resolveTypes = docs.resolveTypes
 local concat, insert = table.concat, table.insert
 local INVISIBLE_CHAR = '\226\128\142' -- U+200E
 
+local configs = require 'configs'
+local colors = configs.res_colors
+
 local responses = {}
 
 local function handleUser(user)
@@ -87,7 +90,7 @@ function responses.class(class, user)
       description = class.description,
       fields = handleParams(class.parameters),
       footer = handleTags(class.tags or {'nui'}),
-      color = 0xaaaaee,
+      color = colors.class,
     }
   }
 end
@@ -107,7 +110,7 @@ function responses.method(method, user)
       description = method.description,
       fields = fields,
       footer = footer,
-      color = 0x12b1b1,
+      color = colors.method,
     }
   }
 end
@@ -126,7 +129,7 @@ function responses.property(property, user)
           inline = true,
         }
       },
-      color = 0xdf5555,
+      color = colors.property,
     }
   }
 end
