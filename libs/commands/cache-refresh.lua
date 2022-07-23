@@ -13,7 +13,7 @@ local function isAllowed(intr)
   if intr.user == intr.client.owner then return true end
 
   -- check the roles if possible
-  if #allowed_roles > 0 and intr.member then
+  if next(allowed_roles) and intr.member then
     for role in intr.member.roles:iter() do
       if allowed_roles[role.id] then
         return true
