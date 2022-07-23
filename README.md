@@ -46,18 +46,40 @@ If the query can resolve to multiple results, only the first to match result is 
 Under the root tree, you will find `configs.lua`. This is where all of the available configurations can be altered. Available fields are:
 
 - `token`: The bot token. Should be prefixed with `Bot `, directly passed to `client.run`.
+
 - `client_options`: A table of client options. Directly passed to the client constructor.
-- `docs_cache_path`: The path at which a JSON file is created, to cache the generated docs. Default: `./cache/docs.json`.
-- `repo_cache_path`: The path to which the Git repo is cloned. Default: `./cache/discordia`.
+
+- `cache_path`: The path where all cache files are stored under.
+
+- `docs_cache_path`: The path at which a JSON file is created, to cache the generated docs. This path is always created under `configs.cache_path`. Default: `docs.json`.
+
+- `repo_cache_path`: The path to which the Git repo is cloned. This path is always created under `configs.cache_path`. Default: `./cache/discordia`.
+
+- `repo_tmp_path`: The directory the repo is cloned into before overriding `repo_cache_path`. This path is always created under `configs.cache_path`. Default: `.tmp`.
+
 - `generate_docs_from`: The path from which to feed the Lua files to the doc generator. Default `./cache/discordia/libs`.
+
 - `repo_url`: The Git URL to use to clone the repo. Default: `https://github.com/SinisterRectus/discordia.git`.
+
 - `wiki_base`: The base URL under which the wiki exists. Default `https://github.com/SinisterRectus/Discordia/wiki/`. Note: You always want a `/` (slash) at the end of the URL.
+
 - `unsafe`: Whether things under `repo_cache_path` and `{repo_cache_path}/../.tmp` can be automatically deleted or not. I recommend to turn this option on. Default: `false`.
+
 - `git_binary`: The path or executable name used to spawn Git CLI. Default: `git`.
+
 - `branch`: The branch to clone and sync against. This is what the docs will be generated from. Default: `master`.
+
 - `detach`: Allows `git.clone` to enter detach state. This is a state where the clone tree does not point to any branch, rather it points to a specific point in time (in history). I have not tested this, and it is not recommended. Only works on initial clones. Default: `false`. 
+
 - `detach_to`: If `detach` is true, clone from this branch instead of `"origin/" .. branch`.
+
 - `reset_to`: Instead of pulling from `branch` on `git.pull` and `/cache-refresh`, instead pull from this branch. Not recommended. Default: `false`.
+
+- `res_colors`: A table with the fields `class`, `method` and `property`. Each field represent the embed color of the response.
+
+- `refresh_allowed_users`: A map that define who is allowed to execute /cache-refresh; where the key is a string of the user ID and value is `true`.
+
+- `refresh_allowed_roles`: A map that define the roles allowed to execute /cache-refresh; where the key is a string of the role ID and value is `true`.
 
 ## License
 
